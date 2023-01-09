@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CambiaValute
 {
-    internal class MacchinaCambiaValute
+    public class MacchinaCambiaValute
     {
     }
 }
