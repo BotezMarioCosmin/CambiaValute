@@ -14,7 +14,8 @@ namespace CambiaValute
         private string[] _valuteDisponibili = new string[] { "€","£","$"};
 
         public double _importoCaricato;
-        public double _tasso = 0;
+        public double _tassoDollari = 0;
+        public double _tassoSterline = 0;
         public string _valutaVendi;
         public string _valutaCompra;
 
@@ -30,6 +31,14 @@ namespace CambiaValute
             Id = id;
             Ditta = ditta;
             DataUltimoCaricamento = dataUltimoCaricamento;
+        }
+
+        public MacchinaCambiaValute(string id, string ditta, string dataUltimoCaricamento, string[] valuteDisponibili)
+        {
+            Id = id;
+            Ditta = ditta;
+            DataUltimoCaricamento = dataUltimoCaricamento;
+            ValuteDisponibili = valuteDisponibili;
         }
 
         public string Id
@@ -62,16 +71,28 @@ namespace CambiaValute
             get { return _valuteDisponibili; }
         }
 
-        public double Tasso
+        public double TassoDollari
         {
             set 
             {
                 if (value > 0)
                 {
-                    _tasso = value;
+                    _tassoDollari = value;
                 }
             }
-            get { return _tasso; }
+            get { return _tassoDollari; }
+        }
+
+        public double TassoSterline
+        {
+            set
+            {
+                if (value > 0)
+                {
+                    _tassoSterline = value;
+                }
+            }
+            get { return _tassoSterline; }
         }
 
         public string ValutaVendi
@@ -101,7 +122,7 @@ namespace CambiaValute
             return false;
         }
 
-        public void tassiScambio(string vendi, string compra)//imposta le valute dello scambio
+        public void valuteScambio(string vendi, string compra)//imposta le valute dello scambio
         {
             if (confrontaValute(vendi) == true && confrontaValute(compra) == true)
             {
@@ -111,15 +132,27 @@ namespace CambiaValute
             else
                 throw new Exception("Valute non valide.");
         }
-        /*
-        public void tasso()
+
+        public void tassoScambioEuroDollari(double tasso)//imposta il tasso dello scambio da Euro a Dollari
         {
-            if (Tasso > 0)
-            { 
-            
+            if (tasso > 0)
+            {
+                TassoDollari = tasso;
             }
+            else
+                throw new Exception("Tasso non valido");
         }
-        */
+
+        public void tassoScambioEuroSterline(double tasso)//imposta il tasso dello scambio da Euro a Sterline
+        {
+            if (tasso > 0)
+            {
+                TassoSterline = tasso;
+            }
+            else
+                throw new Exception("Tasso non valido");
+        }
+
         public void Carica(double importo)
         {
             if (importo > 0)
@@ -129,15 +162,25 @@ namespace CambiaValute
             else
                 throw new Exception("Importo non valido.");
         }
-        /*
-        public double Converti(double importoRestituito)
+        
+        public double ConvertiEuroDollari()
         {
-            if (ImportoCaricato > 0)
+            if (ImportoCaricato > 0 && TassoDollari > 0)
             {
-                
+                return ImportoCaricato * TassoDollari;
             }
             else
                 throw new Exception("Caricare prima un importo!");
-        }*/
+        }
+
+        public double ConvertiEuroSterline()
+        {
+            if (ImportoCaricato > 0 && TassoSterline > 0)
+            {
+                return ImportoCaricato * TassoSterline;
+            }
+            else
+                throw new Exception("Caricare prima un importo!");
+        }
     }
 }
