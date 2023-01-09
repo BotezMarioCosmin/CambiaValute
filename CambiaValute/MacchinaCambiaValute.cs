@@ -14,7 +14,8 @@ namespace CambiaValute
         private string[] _valuteDisponibili = new string[] { "€","£","$"};
         private double[] _tassi = new double[] { 1, 1.12, 0.94};
 
-        public double _importoCaricato;
+        public double _importoCaricato; //importo
+        public string _valuta; //valuta dell'importo caricato
         public double _tassoDollari = 0;
         public double _tassoSterline = 0;
         public string _valutaVendi;
@@ -160,7 +161,7 @@ namespace CambiaValute
                 throw new Exception("Tasso non valido");
         }
 
-        public void Carica(double importo)
+        public void Carica(double importo, string valuta)
         {
             if (importo > 0)
             {
@@ -170,6 +171,20 @@ namespace CambiaValute
                 throw new Exception("Importo non valido.");
         }
         
+        public double Converti()
+        { 
+            for (int i = 0; i < ValuteDisponibili.Length; i++)
+            {
+                if (ValutaVendi == ValuteDisponibili[i])
+                {
+                    ImportoCaricato * Tassi[i];
+                }
+            }
+        }
+
+
+        //// aggiuntive al converti
+
         public double ConvertiEuroDollari()
         {
             if (ImportoCaricato > 0 && TassoDollari > 0)
@@ -188,17 +203,6 @@ namespace CambiaValute
             }
             else
                 throw new Exception("Caricare prima un importo!");
-        }
-
-        public double Converti()
-        { 
-            for (int i = 0; i < ValuteDisponibili.Length; i++)
-            {
-                if (ValutaVendi == ValuteDisponibili[i])
-                {
-                    ImportoCaricato * Tassi[i];
-                }
-            }
         }
     }
 }
