@@ -12,6 +12,7 @@ namespace CambiaValute
         private string _ditta; //ditta produttrice
         private string _dataUltimoCaricamento; //data dell'ultimo aricamento di denaro
         private string[] _valuteDisponibili = new string[] { "€","£","$"};
+        private double[] _tassi = new double[] { 1, 1.12, 0.94};
 
         public double _importoCaricato;
         public double _tassoDollari = 0;
@@ -69,6 +70,12 @@ namespace CambiaValute
         {
             set { _valuteDisponibili = value;}
             get { return _valuteDisponibili; }
+        }
+
+        public double[] Tassi
+        {
+            set { _tassi = value; }
+            get { return _tassi; }
         }
 
         public double TassoDollari
@@ -181,6 +188,17 @@ namespace CambiaValute
             }
             else
                 throw new Exception("Caricare prima un importo!");
+        }
+
+        public double Converti()
+        { 
+            for (int i = 0; i < ValuteDisponibili.Length; i++)
+            {
+                if (ValutaVendi == ValuteDisponibili[i])
+                {
+                    ImportoCaricato * Tassi[i];
+                }
+            }
         }
     }
 }
