@@ -14,15 +14,6 @@ namespace CambiaValute
 
             try
             {
-                m.valuteScambio("€", "$"); ;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            try
-            {
                 m.tassoScambioEuroDollari(0.94);
             }
             catch (Exception ex)
@@ -41,21 +32,14 @@ namespace CambiaValute
 
             try
             {
-                m.Carica(1);
+                m.Carica(1, "");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-            try
-            {
-                Console.WriteLine(m.ConvertiEuroSterline());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Console.WriteLine(m.ImportoCaricato);
             
             Console.ReadKey();
         }
