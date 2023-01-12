@@ -11,14 +11,11 @@ namespace CambiaValute
         private string _id; //primary key
         private string _ditta; //ditta produttrice
         private string _dataUltimoCaricamento; //data dell'ultimo aricamento di denaro
-        private string[] _valuteDisponibili = new string[] { "€","£","$"};
-        private double[] _tassi = new double[] { 1, 1.12, 0.94};
+        private string[] _valuteDisponibili = new string[] { "€","£","$"}; //valute default disponibili
+        private double[] _tassi = new double[] { 1, 1.12, 0.94}; //tassi default (rispetto all'euro)
 
-        private double _importoCaricato; //importo
-        private string _valuta; //valuta dell'importo caricato
-        private double _tassoDollari = 0;
-        private double _tassoSterline = 0;
-        private string _valutaVendi;
+        private double _importo; //importo
+        private string _valuta; //valuta dell'importo
         private string _valutaCompra;
 
         public MacchinaCambiaValute()
@@ -61,10 +58,10 @@ namespace CambiaValute
             get { return _dataUltimoCaricamento; }
         }
 
-        public double ImportoCaricato
+        public double Importo
         {
-            set { _importoCaricato = value; }
-            get { return _importoCaricato; }
+            set { _importo = value; }
+            get { return _importo; }
         }
 
         public string ValutaVendi
@@ -84,65 +81,20 @@ namespace CambiaValute
             get { return _tassi; }
         }
 
-        public double TassoDollari
-        {
-            set 
-            {
-                if (value > 0)
-                {
-                    _tassoDollari = value;
-                }
-            }
-            get { return _tassoDollari; }
-        }
-
-        public double TassoSterline
-        {
-            set
-            {
-                if (value > 0)
-                {
-                    _tassoSterline = value;
-                }
-            }
-            get { return _tassoSterline; }
-        }
-
-
         public string ValutaCompra
         {
             set { _valutaCompra = value; }
             get { return _valutaCompra; }
         }
 
-        public void tassoScambioEuroDollari(double tasso)//imposta il tasso dello scambio da Euro a Dollari
-        {
-            if (tasso > 0)
-            {
-                TassoDollari = tasso;
-            }
-            else
-                throw new Exception("Tasso non valido");
-        }
-
-        public void tassoScambioEuroSterline(double tasso)//imposta il tasso dello scambio da Euro a Sterline
-        {
-            if (tasso > 0)
-            {
-                TassoSterline = tasso;
-            }
-            else
-                throw new Exception("Tasso non valido");
-        }
-
-        public void Carica(double importo, string valutaVendi)
+        public void Carica(double importo, string valutaVendi)//carica l'importo con la sua valuta
         {
             if (importo > 0)
             {
                 if (verificaDisponibilitaValuta(valutaVendi) == true)
                 {
                     ValutaVendi = valutaVendi;
-                    ImportoCaricato = importo;
+                    Importo = importo;
                 }
                 else
                 {
@@ -168,16 +120,29 @@ namespace CambiaValute
 
         
         public double Converti(string valutaCompra)
-        { 
-            for (int i = 0; i < ValuteDisponibili.Length; i++)
+        {
+            ValutaCompra = valutaCompra;
+            if (ValutaVendi == ValuteDisponibili[0])
             {
-
+                if (ValutaCompra == ValuteDisponibili[1])
+                {
+                    Importo = Importo * Tassi[1];
+                    return Importo;
+                }
+                else if (ValutaCompra == ValuteDisponibili[2])
+                {
+                    Importo = Importo * Tassi[2];
+                    return Importo;
+                }
+                else
+                    throw new Exception("Valuta richiesta non disponibile.");
             }
+            return 0;
         }
         
 
         //// aggiuntive al converti
-
+        /*
         public double ConvertiEuroDollari()
         {
             if (ImportoCaricato > 0 && TassoDollari > 0)
@@ -192,6 +157,6 @@ namespace CambiaValute
             {
                 return ImportoCaricato * TassoSterline;
             }
-        }
+        }*/
     }
 }

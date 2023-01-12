@@ -14,33 +14,26 @@ namespace CambiaValute
 
             try
             {
-                m.tassoScambioEuroDollari(0.94);
+                m.Carica(1, "€");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
+            Console.WriteLine("Importo caricato: " + m.Importo + " " + m.ValutaVendi);
 
             try
             {
-                m.tassoScambioEuroSterline(1.14);
+                m.Converti("$");
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
             }
 
-            try
-            {
-                m.Carica(1, "");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
 
-            Console.WriteLine(m.ImportoCaricato);
-            
             Console.ReadKey();
         }
     }
