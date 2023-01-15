@@ -11,18 +11,25 @@ namespace CambiaValute
         private string _id; //primary key
         private string _ditta; //ditta produttrice
         private string _dataUltimoCaricamento; //data dell'ultimo aricamento di denaro
-        private string[] _valuteDisponibili = new string[] { "€","£","$"}; //valute default disponibili
-        private double[] _tassi = new double[] { 1, 1.12, 0.94}; //tassi default (rispetto all'euro)
+        private string _formattazioneData = DateTime.Now.ToString("HH:mm - d/M/yyyy"); //formattazione della data dell'ultimo caricamento
+        private string[] _valuteDisponibili = new string[] { "€", "£", "$" }; //valute default disponibili
+        private double[] _tassi = new double[] { 1, 0.89, 1.08 }; //tassi default (rispetto all'euro)
 
         private double _importo; //importo
-        private string _valuta; //valuta dell'importo
-        private string _valutaCompra;
+        private string _valutaVendi; //valuta dell'importo caricato
+        private string _valutaCompra; //valuta dell'importo richiesto
 
         public MacchinaCambiaValute()
         {
             Id = "MacchinaCambiaValute-00";
             Ditta = "ditta_default";
-            DataUltimoCaricamento = "01/01/2000";
+            DataUltimoCaricamento = "00:00 - 01/01/2000";
+        }
+        public MacchinaCambiaValute(string id, string ditta)
+        {
+            Id = id;
+            Ditta = ditta;
+            DataUltimoCaricamento = "00:00 - 01/01/2000";
         }
 
         public MacchinaCambiaValute(string id, string ditta, string dataUltimoCaricamento)
@@ -32,22 +39,15 @@ namespace CambiaValute
             DataUltimoCaricamento = dataUltimoCaricamento;
         }
 
-        public MacchinaCambiaValute(string id, string ditta, string dataUltimoCaricamento, string[] valuteDisponibili)
-        {
-            Id = id;
-            Ditta = ditta;
-            DataUltimoCaricamento = dataUltimoCaricamento;
-            ValuteDisponibili = valuteDisponibili;
-        }
 
         public string Id
         {
             set { _id = value; }
-            get { return _id; }        
+            get { return _id; }
         }
 
         public string Ditta
-        { 
+        {
             set { _ditta = value; }
             get { return _ditta; }
         }
@@ -58,6 +58,12 @@ namespace CambiaValute
             get { return _dataUltimoCaricamento; }
         }
 
+        public string FormattazioneData
+        {
+            set { _formattazioneData = value; }
+            get { return _formattazioneData; }
+        }
+
         public double Importo
         {
             set { _importo = value; }
@@ -66,12 +72,12 @@ namespace CambiaValute
 
         public string ValutaVendi
         {
-            set { _valuta = value; }
-            get { return _valuta; }
+            set { _valutaVendi = value; }
+            get { return _valutaVendi; }
         }
         public string[] ValuteDisponibili
         {
-            set { _valuteDisponibili = value;}
+            set { _valuteDisponibili = value; }
             get { return _valuteDisponibili; }
         }
 
@@ -91,10 +97,11 @@ namespace CambiaValute
         {
             if (importo > 0)
             {
-                if (verificaDisponibilitaValuta(valutaVendi) == true)
+                if (VerificaDisponibilitaValuta(valutaVendi) == true)
                 {
                     ValutaVendi = valutaVendi;
                     Importo = importo;
+                    DataUltimoCaricamento = FormattazioneData;
                 }
                 else
                 {
@@ -103,10 +110,18 @@ namespace CambiaValute
             }
             else
                 throw new Exception("Importo non valido.");
-
         }
 
-        public bool verificaDisponibilitaValuta(string valuta)//verifica se la valuta inserita è presente nell'array delle valute disponibili
+        public string Eroga()
+        {
+            double tmp = Importo;
+            Importo = 0;
+            ValutaCompra = null;
+            ValutaVendi = null;
+            return tmp + " " + ValutaCompra;
+        }
+
+        public bool VerificaDisponibilitaValuta(string valuta)//verifica se la valuta inserita è presente nell'array delle valute disponibili
         {
             for (int i = 0; i < ValuteDisponibili.Length; i++)
             {
@@ -119,44 +134,79 @@ namespace CambiaValute
         }
 
         
-        public double Converti(string valutaCompra)
+        public double Converti(string valutaCompra) // converte tra le valute disponibili
         {
             ValutaCompra = valutaCompra;
-            if (ValutaVendi == ValuteDisponibili[0])
+            if (ValutaVendi == ValuteDisponibili[0]) // se vendi euro 
             {
-                if (ValutaCompra == ValuteDisponibili[1])
+                if (ValutaCompra == ValuteDisponibili[0]) // se ricompri euro
+                {
+                    return Importo;
+                } 
+                else if (ValutaCompra == ValuteDisponibili[1]) // se compri sterline
                 {
                     Importo = Importo * Tassi[1];
-                    return Importo;
+                    return Approssima2decimali(Importo);
                 }
-                else if (ValutaCompra == ValuteDisponibili[2])
+                else if (ValutaCompra == ValuteDisponibili[2]) // se compri dollari
                 {
                     Importo = Importo * Tassi[2];
-                    return Importo;
+                    return Approssima2decimali(Importo);
                 }
-                else
+                else // se valuta non disponibile
                     throw new Exception("Valuta richiesta non disponibile.");
             }
-            return 0;
+            else if (ValutaVendi == ValuteDisponibili[1]) // se vendi sterline 
+            {
+                if (ValutaCompra == ValuteDisponibili[1]) // se ricompri sterline
+                {
+                    return Importo;
+                }
+                else if (ValutaCompra == ValuteDisponibili[0]) // se compri euro
+                {
+                    Importo = Importo / Tassi[1]; // trasformo in euro
+                    return Approssima2decimali(Importo);
+                }
+                else if (ValutaCompra == ValuteDisponibili[2]) // se compri dollari
+                {
+                    Importo = Importo / Tassi[1] * Tassi[2]; // trasformo in euro e sucessivamente in dollari
+                    return Approssima2decimali(Importo);
+                }
+                else // se valuta non disponibile
+                    throw new Exception("Valuta richiesta non disponibile.");
+            }
+            else if (ValutaVendi == ValuteDisponibili[2]) // se vendi dollari
+            {
+
+                if (ValutaCompra == ValuteDisponibili[2]) // se ricompri dollari
+                {
+                    return Importo;
+                }
+                else if (ValutaCompra == ValuteDisponibili[0]) // se compri euro
+                {
+                    Importo = Importo / Tassi[2]; // trasformo in euro
+                    return Approssima2decimali(Importo);
+                }
+                else if (ValutaCompra == ValuteDisponibili[1]) // se compri sterline
+                {
+                    Importo = Importo / Tassi[2] * Tassi[1]; // trasformo in euro e sucessivamente in sterline
+                    return Approssima2decimali(Importo);
+                }
+                else // se valuta non disponibile
+                    throw new Exception("Valuta richiesta non disponibile.");
+            }
+            throw new Exception("Errore, riprovare utilizzando le valute disponibili.");
+        }
+
+        private double Approssima2decimali(double numero)
+        {
+            int tmp;
+            numero = numero * 100;
+            tmp = Convert.ToInt32(numero);
+            numero = tmp;
+            numero = numero / 100;
+            return numero;
         }
         
-
-        //// aggiuntive al converti
-        /*
-        public double ConvertiEuroDollari()
-        {
-            if (ImportoCaricato > 0 && TassoDollari > 0)
-            {
-                return ImportoCaricato * TassoDollari;
-            }
-        }
-
-        public double ConvertiEuroSterline()
-        {
-            if (ImportoCaricato > 0 && TassoSterline > 0)
-            {
-                return ImportoCaricato * TassoSterline;
-            }
-        }*/
     }
 }
