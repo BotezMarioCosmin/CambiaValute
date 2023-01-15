@@ -24,12 +24,14 @@ namespace CambiaValute
 
             try
             {
-                m.Carica(1, "$");
+                m.Carica(1, "£");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            
+            Console.WriteLine("Importo caricato: " + m.Importo + " " + m.ValutaVendi);
 
             try
             {
@@ -40,7 +42,81 @@ namespace CambiaValute
                 Console.WriteLine(ex.Message);
             }
 
+            try
+            {
+                m.Converti("$");
+                Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+            try
+            {
+                Console.WriteLine("Importo erogato: " + m.Eroga());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                Console.WriteLine("Erogazioni: " + m.ContaErogazioni);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            MacchinaCambiaValute m1 = m.Clone();
+            Console.WriteLine(m.DataUltimoCaricamento);
+            Console.WriteLine("Clone: " + m1.DataUltimoCaricamento);
+            Console.WriteLine(m1.Equals(m));
+            MacchinaCambiaValute m2 = new MacchinaCambiaValute("a", "lol");
+            Console.WriteLine(m2.Equals(m));
+            Console.WriteLine(m.ToString());
+
+
+            try
+            {
+                Console.WriteLine("Valute disponibili: " + m.ValuteDisponibili[0] + m.ValuteDisponibili[1] + m.ValuteDisponibili[2]);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                m.Carica(20, "€");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
             Console.WriteLine("Importo caricato: " + m.Importo + " " + m.ValutaVendi);
+
+            try
+            {
+                Console.WriteLine("Data ultimo caricamento: " + m.DataUltimoCaricamento);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                m.Converti("$");
+                Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             try
             {
@@ -53,10 +129,50 @@ namespace CambiaValute
 
             try
             {
+                Console.WriteLine("Erogazioni: " + m.ContaErogazioni);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            ///////
+            Console.WriteLine("");
+
+            try
+            {
+                Console.WriteLine("Valute disponibili: " + m.ValuteDisponibili[0] + m.ValuteDisponibili[1] + m.ValuteDisponibili[2]);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                m.Carica(55, "$");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            Console.WriteLine("Importo caricato: " + m.Importo + " " + m.ValutaVendi);
+
+            try
+            {
+                Console.WriteLine("Data ultimo caricamento: " + m.DataUltimoCaricamento);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
                 m.Converti("£");
                 Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -64,13 +180,40 @@ namespace CambiaValute
             try
             {
                 m.Converti("€");
+                Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
             }
 
+            try
+            {
+                m.Converti("$");
+                Console.WriteLine("Importo convertito: " + m.Importo + " " + m.ValutaCompra);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                Console.WriteLine("Importo erogato: " + m.Eroga());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            try
+            {
+                Console.WriteLine("Erogazioni: " + m.ContaErogazioni);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             Console.ReadKey();
         }
